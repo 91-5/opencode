@@ -1,0 +1,135 @@
+// =====================================================================
+// opencode.jsonc — jarvis-opencode-framework 通用配置
+//
+// 这是框架默认配置。开箱后你只需要改一处：把 model / small_model
+// 换成你自己的 provider + 模型（见下方 provider 示例）。
+// 其余（slim 编排、agent-os、skills）无需改动即可用。
+//
+// 不需要的 MCP / provider 直接整块删除或 enabled:false 即可。
+// =====================================================================
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // 主力 / 小模型：改成你自己的 provider 与模型
+  // 格式 "<provider-id>/<model-id>"，provider-id 对应下方 provider 块的名字
+  "model": "my-provider/my-model",
+  "small_model": "my-provider/my-model",
+
+  "plugin": [
+    // 本地插件目录引用（相对 ~/.config/opencode/ 的路径，或已发布的 npm 包名）
+    "~/.config/opencode/superpowers",
+    "@cortexkit/opencode-magic-context",
+    "opencode-pty",
+    "opencode-wakatime",
+    "@neomei/agentsoul",
+    "oh-my-opencode-slim"
+    // 说明：如已全局安装 supermemory 插件（例如 npm i -g opencode-supermemory），
+    // 可在此追加其包名引用，如：
+    // "opencode-supermemory"
+  ],
+
+  "mcp": {
+    // 通用：无需本地依赖，npx 自动拉取
+    "context7": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "enabled": true
+    },
+    // 可选：local-rag 长文检索，需要本地 Python 服务。
+    // 把 command 第二行改成你的 rag_server.py 绝对路径；不用可整块删除或 enabled:false。
+    "local-rag": {
+      "type": "local",
+      "command": [
+        "python",
+        "C:\\path\\to\\rag_server.py"
+      ],
+      "enabled": false
+    },
+    // 可选：nuphus-mcp 视觉能力，需要本地 ollama 视觉模型（如 moondream）。
+    // 不用可整块删除。
+    "nuphus-mcp": {
+      "type": "local",
+      "command": [
+        "nuphus-mcp",
+        "--confirm-write"
+      ],
+      "enabled": false,
+      "env": {
+        "NUPHUS_MCP_VISION_BASE_URL": "http://localhost:11434/v1",
+        "NUPHUS_MCP_VISION_MODEL": "moondream",
+        "NUPHUS_MCP_VISION_API_KEY": "ollama"
+      }
+    },
+    // 通用：托管式 remote MCP（需要 supermemory 账号）
+    "supermemory": {
+      "type": "remote",
+      "url": "https://mcp.supermemory.ai/mcp"
+    }
+  },
+
+  "instructions": [
+    "AGENTS.md"
+  ],
+
+  "provider": {
+    // ===== 示例 provider：改成你自己的 =====
+    // 大多数第三方聚合/中转站都走 OpenAI 兼容协议（@ai-sdk/openai-compatible）。
+    "my-provider": {
+      "name": "My Provider",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "https://your-provider-endpoint/v1",
+        "apiKey": "{env:YOUR_PROVIDER_API_KEY}"
+      },
+      "models": {
+        "my-model": {
+          "name": "my-model"
+        }
+      }
+    }
+
+    // ===== 常用 provider 写法示例（取消注释并按需修改）=====
+    //
+    // 1) Agnes:
+    // "agnes": {
+    //   "name": "agnes",
+    //   "npm": "@ai-sdk/openai-compatible",
+    //   "options": {
+    //     "baseURL": "https://apihub.agnes-ai.com/v1",
+    //     "apiKey": "{env:AGNES_API_KEY}"
+    //   },
+    //   "models": { "agnes-3.0-flash": { "name": "agnes-3.0-flash" } }
+    // }
+    //
+    // 2) 本地 ollama:
+    // "ollama": {
+    //   "name": "Ollama",
+    //   "npm": "@ai-sdk/openai-compatible",
+    //   "options": { "baseURL": "http://localhost:11434/v1" },
+    //   "models": { "qwen2.5:7b": { "name": "qwen2.5:7b" } }
+    // }
+  },
+
+  "agent": {
+    "hard-reasoning": {
+      "mode": "subagent",
+      // 填一个你可用的推理模型（复用上面 provider 的模型即可）
+      "model": "my-provider/my-model",
+      "description": "P2 中长文(30k-128k)主推理 / P3 复杂推理代码主答 / 抽检不合格重写"
+    },
+    "council": {
+      "mode": "subagent",
+      "model": "my-provider/my-model",
+      "description": "P1.5 工程参谋: 工程/架构/调试/坑避/调研类问题的前置思考（sir 未明确指派'你怎么看'且触发条件命中时默认派它）"
+    }
+  },
+
+  "lsp": true,
+
+  // 按需禁用不需要的 provider（默认全部启用留空）
+  "disabled_providers": []
+}
