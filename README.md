@@ -4,6 +4,15 @@
 
 > 这是框架，不是个人配置。所有个人化内容（称呼、密钥、本地端点、具体模型）都已抽掉或改成示例，你填自己的。
 
+## 第一步：先装 opencode 本体（本包不含）
+
+opencode 官方仓库（活跃、213k★、含桌面端）：**https://github.com/anomalyco/opencode**
+
+- **桌面端（推荐新手）**：进 [Releases](https://github.com/anomalyco/opencode/releases)，下载 `opencode-desktop-win-x64.exe` 双击安装。
+- **终端版**：同一 Releases 页下载 `opencode-windows-x64.zip` 解压，或 `winget install opencode` / `npm i -g opencode-ai`。
+
+> 注意：旧仓库 `opencode-ai/opencode`（Go 版）已 archived 停更，且只有终端版，**不要从那里下**。
+
 ## 包含什么
 
 | 组件 | 说明 |
@@ -21,10 +30,10 @@
 - 任何真实 API Key / 本地端点实址。
 - 个人专属技能：`impeccable`(20MB 设计资源)、`iot-job-hunter`(求职专用)、`tencentdb-memory`(私有记忆)。
 
-## 安装（假设你已装好 opencode）
+## 第二步：注入本框架（假设你已装好 opencode）
 
 ```powershell
-# 1. 拿到仓库
+# 1. 拿到本仓库
 git clone <本仓库地址> jarvis-opencode-framework
 cd jarvis-opencode-framework
 
@@ -38,11 +47,13 @@ powershell -ExecutionPolicy Bypass -File install.ps1
 3. 落位 `config/` `slim/` `agent-os/` `skills/`。
 4. 写 `install-receipt.json` 回执。
 
+> 桌面端与终端版共用同一个配置目录（`%USERPROFILE%\.config\opencode`），所以无论你装哪种，本注入脚本都适用。
+
 ## 之后要改什么才能跑起来
 
-最少改一处：`~/.config/opencode/opencode.jsonc` 里的 `model` / `small_model`，换成你的 provider + 模型（格式 `"<provider-id>/<model-id>"`）。文件里已有一个 `my-provider` 示例，照着改 `baseURL` 和 `apiKey`（用 `{env:你的环境变量}` 引用 key，别把 key 明文写进文件）即可。其余（dp-brain / ollama / local-rag / 网关）都是**可选**，保持 `enabled:false` 或不填不影响启动。
+最少改一处：`~/.config\opencode\opencode.jsonc` 里的 `model` / `small_model`，换成你的 provider + 模型（格式 `"<provider-id>/<model-id>"`）。文件里已有一个 `my-provider` 示例，照着改 `baseURL` 和 `apiKey`（用 `{env:你的环境变量}` 引用 key，别把 key 明文写进文件）即可。其余（dp-brain / ollama / local-rag / 网关）都是**可选**，保持 `enabled:false` 或不填不影响启动。
 
-改完终端输入 `opencode` 启动。
+改完启动 opencode（桌面端点图标 / 终端输入 `opencode`）即可。
 
 ## 自定义
 
