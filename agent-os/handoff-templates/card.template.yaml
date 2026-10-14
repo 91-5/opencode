@@ -1,0 +1,16 @@
+id: <前缀>-<日期>-<序号>
+title: 一句话目标
+context: |
+  背景/动机/约束
+deliverables:
+  - 结果1（非过程）
+owned_files:
+  - "$AGENT_OS_ROOT/..."   # 独占路径 glob，防 lost-update
+forbidden_files: []
+base_commit: "<hash>"
+acceptance:
+  - "带退出码的验证命令 -> 期望结果"
+status: OPEN
+owner: <AGENT>
+reviewer: <REVIEWER>
+created: <日期>

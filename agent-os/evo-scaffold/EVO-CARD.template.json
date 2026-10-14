@@ -1,0 +1,37 @@
+﻿{
+  "id": "EVO-YYYYMMDD-NNN",
+  "title": "一句话提案标题",
+  "trigger": {
+    "type": "review_reject|owner_directive|incident|rework|recurring_issue",
+    "ref": "触发事件的引用（评审行 / 指令原文 / 事故记录）"
+  },
+  "evidence": [
+    "证据1（≥2 独立来源或 1 次高影响事件）",
+    "证据2"
+  ],
+  "scope": "global|project",
+  "current_rule": "现状规则描述",
+  "proposed_change": "提案变更内容",
+  "gated_version_bump": {
+    "index_rule_version": "vX.Y->vX.Z",
+    "agentsmd_appendix": "vX.Y->vX.Z",
+    "card_status": "CANDIDATE->ACTIVE",
+    "authority": "(负责人批准后填写)",
+    "note": "GATED 写权由 Orchestrator 执行；改 ≥3 文件先做快照保护"
+  },
+  "confidence": 0.7,
+  "risk": "low|medium|high",
+  "verification_plan": "Reviewer 评审要点 + Heavy-Impl 隔离验证场景（≤3 次端到端）",
+  "rollback_plan": "回滚路径（还原文字/删目录/快照恢复）",
+  "supersedes": [],
+  "conflicts_with": [],
+  "ttl_days": 180,
+  "owner": "Orchestrator",
+  "status": "CANDIDATE",
+  "owned_files": [
+    "$AGENT_OS_ROOT/..."
+  ],
+  "acceptance": [
+    "带退出码的验证命令 -> 期望结果"
+  ]
+}

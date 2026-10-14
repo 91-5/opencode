@@ -1,0 +1,28 @@
+{
+  "name": "jarvis-opencode-framework",
+  "version": "1.0.0",
+  "description": "去个人化的 opencode 通用框架：纪律体系 + 多 agent 编排 + agent-os 可移植包 + 通用 skills + 安装脚本。",
+  "install_target": "%USERPROFILE%\\.config\\opencode",
+  "profiles": {
+    "minimal": ["config/AGENTS.md", "config/opencode.template.jsonc", "config/tui.json", "slim"],
+    "full": ["config", "slim", "agent-os", "skills"]
+  },
+  "components": [
+    { "id": "config-agents", "path": "config/AGENTS.md", "deps": [], "desc": "去个人化纪律框架（安全/知识沉淀/工程严谨性/EVO）" },
+    { "id": "config-opencode", "path": "config/opencode.template.jsonc", "deps": [], "desc": "opencode 配置模板（占位符 + 注释，模型由用户填）" },
+    { "id": "config-tui", "path": "config/tui.json", "deps": [], "desc": "TUI 偏好" },
+    { "id": "env-example", "path": "config/.env.example", "deps": [], "desc": "需要填写的环境变量清单" },
+    { "id": "slim", "path": "slim", "deps": [], "desc": "oh-my-opencode-slim 多 agent 编排框架" },
+    { "id": "agent-os", "path": "agent-os", "deps": [], "desc": "通用可移植协同包（角色/交接/EVO 脚手架）" },
+    { "id": "skills-superpowers", "path": "skills/superpowers", "deps": [], "desc": "通用 superpowers 技能集（16 个）" },
+    { "id": "skills-misc", "path": "skills/oh-my-opencode-slim,skills/worktrees,skills/simplify,skills/reflect,skills/codemap,skills/clonedeps,skills/jailbreak-master", "deps": [], "desc": "其余通用技能" }
+  ],
+  "render_vars": [
+    "USER", "ORCHESTRATOR", "HEAVY_IMPL", "IDE_IMPL", "REVIEWER", "TASK_PREFIX",
+    "WORKSPACE_ROOT", "BRAIN_NOTES", "BRAIN_INBOX", "REVIEW_DIR", "HANDOFFS_DIR",
+    "KNOWLEDGE_EXPORT_ROOT", "DEEPFREEZE_SCRIPT", "AGENT_COVENANT_TEMPLATES", "SECURITY_KB",
+    "AGENT_OS_ROOT", "DP_BRAIN_ENDPOINT", "GATEWAY_ENDPOINT", "OLLAMA_ENDPOINT",
+    "DEEPSEEK_BRAIN_DIR", "SHIM_START_CMD", "MAIN_MODEL", "SMALL_MODEL",
+    "MY_PROVIDER_BASE_URL", "P1P5_MODEL", "LOCAL_RAG_SERVER_PATH"
+  ]
+}

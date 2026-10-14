@@ -1,0 +1,8 @@
+﻿{
+  "protocol_version": "1.0.0",
+  "pack_version": "2026-10-05.5",
+  "schema": "agent-os/v1",
+  "created": "2026-10-05",
+  "hash": "sha256:5cbcd8ff8da358e1",
+  "hash_scope": "sha256 over utf8( stripBOM(AGENTS.md) + SEP + stripBOM(TEAM_PROTOCOL.md) + SEP + stripBOM(BOOTSTRAP-PROMPTS.md) )[:16]; SEP=LF+\"---\"+LF (0x0A 0x2D 0x2D 0x2D 0x0A); stripBOM removes leading U+FEFF; 可执行复现见包内 verify-hash.js"
+}

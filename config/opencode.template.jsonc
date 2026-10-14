@@ -1,0 +1,152 @@
+// =====================================================================
+// opencode.template.jsonc — 去个人化框架模板
+// install.ps1 会读取同目录 .env，把下面的 $XXX 占位符渲染成真实值后
+// 写入 ~/.config/opencode/opencode.jsonc。
+//
+// 渲染变量清单（$ 形式占位符）：
+//   $MAIN_MODEL             主力对话模型，格式 "<provider>/<model-id>"
+//   $SMALL_MODEL            小模型（标题/摘要等轻量任务），格式同上
+//   $MY_PROVIDER_BASE_URL   自定义 provider 的 baseURL
+//   $P1P5_MODEL             P1.5 工程参谋 / P2 推理用模型（agent 块）
+//   $LOCAL_RAG_SERVER_PATH  local-rag 的 rag_server.py 绝对路径（可选）
+//   $OLLAMA_ENDPOINT        本地 ollama 端点（可选，nuphus-mcp 视觉用）
+//
+// 环境变量引用（{env:XXX}）见同目录 .env.example。
+// =====================================================================
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // 主力 / 小模型：填成你自己的 provider 与模型
+  "model": "$MAIN_MODEL",
+  "small_model": "$SMALL_MODEL",
+
+  "plugin": [
+    // 本地插件目录引用（相对 ~/.config/opencode/ 的路径，或已发布的 npm 包名）
+    "~/.config/opencode/superpowers",
+    "@cortexkit/opencode-magic-context",
+    "opencode-pty",
+    "opencode-wakatime",
+    "@neomei/agentsoul",
+    "oh-my-opencode-slim"
+    // 说明：如已全局安装 supermemory 插件（例如 npm i -g opencode-supermemory），
+    // 可在此追加其包名引用，如：
+    // "opencode-supermemory"
+  ],
+
+  "mcp": {
+    // 通用：无需本地依赖，npx 自动拉取
+    "context7": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "enabled": true
+    },
+    // 可选：local-rag 长文检索，需要本地 Python 服务。
+    // 把 .env 的 LOCAL_RAG_SERVER_PATH 指向 rag_server.py 的绝对路径；
+    // 若不用可整块删除，或把 enabled 设为 false。
+    "local-rag": {
+      "type": "local",
+      "command": [
+        "python",
+        "$LOCAL_RAG_SERVER_PATH"
+      ],
+      "enabled": true
+    },
+    // 可选：nuphus-mcp 视觉能力，需要本地 ollama 视觉模型。
+    // 不用可整块删除；endpoint 走 $OLLAMA_ENDPOINT。
+    "nuphus-mcp": {
+      "type": "local",
+      "command": [
+        "nuphus-mcp",
+        "--confirm-write"
+      ],
+      "enabled": true,
+      "env": {
+        "NUPHUS_MCP_VISION_BASE_URL": "$OLLAMA_ENDPOINT",
+        "NUPHUS_MCP_VISION_MODEL": "moondream",
+        "NUPHUS_MCP_VISION_API_KEY": "ollama"
+      }
+    },
+    // 通用：托管式 remote MCP
+    "supermemory": {
+      "type": "remote",
+      "url": "https://mcp.supermemory.ai/mcp"
+    }
+  },
+
+  "instructions": [
+    "AGENTS.md"
+  ],
+
+  "provider": {
+    // ===== 通用 provider 示例：按需复制改名 =====
+    "my-provider": {
+      "name": "My Provider",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "$MY_PROVIDER_BASE_URL",
+        "apiKey": "{env:MY_PROVIDER_API_KEY}"
+      },
+      "models": {
+        "my-model": {
+          "name": "my-model"
+        }
+      }
+    }
+
+    // ===== 常用 provider 写法示例（注释参考，取消注释并按需修改）=====
+    //
+    // 1) OpenAI 兼容网关（大多数第三方聚合/中转都走这个）：
+    // "my-openai-compat": {
+    //   "name": "OpenAI Compatible",
+    //   "npm": "@ai-sdk/openai-compatible",
+    //   "options": {
+    //     "baseURL": "$MY_PROVIDER_BASE_URL",
+    //     "headers": { "Authorization": "Bearer {env:MY_PROVIDER_API_KEY}" }
+    //   },
+    //   "models": { "some-model": { "name": "some-model" } }
+    // }
+    //
+    // 2) Agnes:
+    // "agnes": {
+    //   "name": "agnes",
+    //   "npm": "@ai-sdk/openai-compatible",
+    //   "options": {
+    //     "baseURL": "https://apihub.agnes-ai.com/v1",
+    //     "apiKey": "{env:AGNES_API_KEY}"
+    //   },
+    //   "models": { "agnes-3.0-flash": { "name": "agnes-3.0-flash" } }
+    // }
+    //
+    // 3) 本地 ollama:
+    // "ollama": {
+    //   "name": "Ollama",
+    //   "npm": "@ai-sdk/openai-compatible",
+    //   "options": { "baseURL": "$OLLAMA_ENDPOINT" },
+    //   "models": { "qwen2.5:7b": { "name": "qwen2.5:7b" } }
+    // }
+  },
+
+  "agent": {
+    "hard-reasoning": {
+      "mode": "subagent",
+      // 填一个你可用的推理模型（如某 provider 的强推理模型），格式 provider/model-id
+      "model": "$P1P5_MODEL",
+      "description": "P2 中长文(30k-128k)主推理 / P3 复杂推理代码主答 / 抽检不合格重写"
+    },
+    "council": {
+      "mode": "subagent",
+      // P1.5 工程参谋与 hard-reasoning 可共用同一推理模型
+      "model": "$P1P5_MODEL",
+      "description": "P1.5 工程参谋: 工程/架构/调试/坑避/调研类问题的前置思考（sir 未明确指派'你怎么看'且触发条件命中时默认派它）"
+    }
+  },
+
+  "lsp": true,
+
+  // 按需禁用不需要的 provider（默认全部启用留空）
+  "disabled_providers": []
+}
